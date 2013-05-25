@@ -14,9 +14,9 @@ class Huboard
     end
 
     helpers do
-      def protected! 
+      def protected!
         return current_user if authenticated?
-        authenticate! 
+        authenticate!
       end
     end
 
@@ -34,23 +34,23 @@ class Huboard
       "Authorized yo!"
     end
 
-    get '/:user/:repo/backlog' do 
+    get '/:user/:repo/backlog' do
       return json pebble.build_backlog(params[:user], params[:repo])
     end
 
-    get '/:user/:repo/board' do 
+    get '/:user/:repo/board' do
       return json pebble.board(params[:user], params[:repo])
     end
 
-    get '/:user/:repo/column' do 
+    get '/:user/:repo/column' do
       return json pebble.backlog_column(params[:user], params[:repo])
     end
 
-    get '/:user/:repo/issues/:number/feed' do 
+    get '/:user/:repo/issues/:number/feed' do
       return json pebble.feed_for_issue(params[:user], params[:repo], params[:number])
 
     end
-    post '/:user/:repo/issues/:number/update_labels' do 
+    post '/:user/:repo/issues/:number/update_labels' do
       labels = params[:labels] ? params[:labels][:name] : []
       issue = pebble.update_issue_labels(params[:user], params[:repo], params[:number], labels).to_hash
 
@@ -60,35 +60,35 @@ class Huboard
 
     end
 
-    post '/:user/:repo/reorderissue' do 
+    post '/:user/:repo/reorderissue' do
       milestone = params["issue"]
       json pebble.reorder_issue params[:user], params[:repo], milestone["number"], params[:index]
     end
 
-    post '/:user/:repo/reordermilestone' do 
+    post '/:user/:repo/reordermilestone' do
       milestone = params["milestone"]
       json pebble.reorder_milestone params[:user], params[:repo], milestone["number"], params[:index], params[:status]
     end
 
-    post '/:user/:repo/assigncard' do 
+    post '/:user/:repo/assigncard' do
       issue = pebble.assign_card params[:user], params[:repo], params[:issue], params[:assignee]
       publish "#{params[:user]}/#{params[:repo]}", "Assigned.#{params[:issue][:number]}", issue
       json issue
     end
 
-    post '/:user/:repo/assignmilestone' do 
+    post '/:user/:repo/assignmilestone' do
       issue = pebble.assign_milestone params[:user], params[:repo], params[:issue], params[:milestone]
       publish "#{params[:user]}/#{params[:repo]}", "Milestone.#{params[:issue][:number]}", issue
       json issue
     end
-    
 
-    post '/:user/:repo/movecard' do 
+
+    post '/:user/:repo/movecard' do
       publish "#{params[:user]}/#{params[:repo]}", "Moved.#{params[:issue][:number]}", { issue:params[:issue], index: params[:index]}
       json pebble.move_card params[:user], params[:repo], params[:issue], params[:index]
     end
 
-    post '/:user/:repo/close' do                                                               
+    post '/:user/:repo/close' do
       publish "#{params[:user]}/#{params[:repo]}", "Closed.#{params[:issue][:number]}", { issue:params[:issue]}
       json pebble.close_card params[:user], params[:repo], params[:issue]
     end

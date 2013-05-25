@@ -1,5 +1,5 @@
 <div id="stage" data-module="board/main" data-parameters='<%= @parameters.to_json %>'>
-<div id="drawer" > 
+<div id="drawer" >
   <a href="#toggle-drawer" class="hide  arrow-right toggle-drawer"><span></span></a>
 </div>
 </div>
@@ -11,16 +11,25 @@
   <li class="active">
   <a href="/<%= h @parameters[:user]%>/<%= h @parameters[:repo]%>/board">Tasks</a>
   </li>
-
+  <li class="dropdown">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Create a new issue<b class='caret'></b></a>
+    <ul class="dropdown-menu">
+      <form action="create-issue" method="post">
+        <li> <input type="text" id="inputTitle" name="title" placeholder="Title"> </li>
+        <li> <input type="text" id="inputBody" name="body" placeholder="Body"> </li>
+        <li><input type='submit' value='Send' class='button'></li>
+      </form>
+    </ul>
+  </li>
 <% end %>
 
 <% content_for :overlay do %>
   <div class="fullscreen-overlay" >
 
     <div class="fullscreen-wrapper" data-module="card/main" data-parameters='<%= @parameters.to_json %>'>
-      
+
     </div>
-    
+
   </div>
 
 <% end %>

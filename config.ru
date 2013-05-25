@@ -10,7 +10,7 @@ require './lib/api.rb'
 require './lib/github.rb'
 require './lib/pebble.rb'
 
-configure :production do 
+configure :production do
   require "newrelic_rpm"
 end
 
@@ -21,6 +21,6 @@ map "/api" do
   run Huboard::API
 
 end
-map "/" do 
+map "/" do
     run Huboard::App
 end

@@ -1,6 +1,8 @@
 .settings
 .token
 .rvmrc
+.bundle/
+bin/
 tmp/
 log/
 .DS_Store

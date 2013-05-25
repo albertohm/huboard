@@ -18,9 +18,9 @@ class Huboard
     end
 
     helpers do
-      def protected! 
+      def protected!
         return current_user if authenticated?
-        authenticate! 
+        authenticate!
         #HAX! TODO remove
         #ghee = Ghee.new({ :basic_auth => {:user_name => settings.user_name, :password => settings.password}})
         #Stint::Github.new(ghee).add_to_team(settings.team_id, current_user.login) unless github_team_access? settings.team_id
@@ -40,7 +40,7 @@ class Huboard
       redirect '/'
     end
 
-    get '/' do 
+    get '/' do
       @parameters = params
       return erb :home, :layout => :marketing unless authenticated?
       protected!
@@ -48,7 +48,7 @@ class Huboard
       erb :index
     end
 
-    get '/:user/?' do 
+    get '/:user/?' do
       protected!
       @parameters = params
       @repos = huboard.repos_by_user(params[:user])
@@ -56,7 +56,7 @@ class Huboard
       erb :index
     end
 
-    get '/:user/:repo/?' do 
+    get '/:user/:repo/?' do
       @parameters = params.merge({:login => current_user.login, :socket_backend => socket_backend})
 
       adapter = huboard.board(params[:user], params[:repo])
@@ -71,7 +71,7 @@ class Huboard
       erb :repo
     end
 
-    get '/:user/:repo/backlog' do 
+    get '/:user/:repo/backlog' do
       @parameters = params.merge({:login => current_user.login, :socket_backend => socket_backend})
       erb :backlog, :layout => :layout_fluid
     end
@@ -86,18 +86,18 @@ class Huboard
       redirect "/#{params[:user]}/#{params[:repo]}/board"
     end
 
-    get '/:user/:repo/board/?' do 
+    get '/:user/:repo/board/?' do
       @parameters = params.merge({:login => current_user.login, :socket_backend => socket_backend})
       erb :board, :layout => :layout_fluid
     end
 
 
-    get '/:user/:repo/hook' do 
+    get '/:user/:repo/hook' do
       @parameters = params
       json(pebble.create_hook( params[:user], params[:repo], "#{socket_backend}/issues/webhook?token=#{encrypted_token}")) unless socket_backend.nil?
     end
 
-    post '/webhook' do 
+    post '/webhook' do
       begin
         token =  decrypt_token( params[:token] )
         ghee = gh(token)
@@ -113,6 +113,12 @@ class Huboard
       rescue
         return json({:message => "something go wrong?"})
       end
+    end
+
+    post '/:user/:repo/create-issue' do
+      issues = github.gh.repos(params[:user], params[:repo]).issues
+      issues.create({title: params[:title], body: params[:body]})
+      redirect "/#{params[:user]}/#{params[:repo]}/board"
     end
 
     helpers Sinatra::ContentFor

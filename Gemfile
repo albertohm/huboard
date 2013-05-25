@@ -16,6 +16,7 @@ group :development do
   gem 'sass'
   gem 'bourbon'
   gem 'thin'
+  gem 'debugger'
 end
 
 group :production do
